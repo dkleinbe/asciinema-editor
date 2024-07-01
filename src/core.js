@@ -401,6 +401,13 @@ class Core {
     return this.duration;
   }
 
+  getMarkers() {
+    return this.driver.getMarkers();
+  }
+  addMarker(where) {
+    return this.driver.addMarker(where);
+  }
+
   // private
 
   setState(newState, data = {}) {

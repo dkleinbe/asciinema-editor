@@ -337,6 +337,9 @@ export default (props) => {
       }
     } else if (e.key == "Escape") {
       setIsHelpVisible(false);
+    } else if (e.key == 'm') {
+      core.addMarker("in")
+      updateMarker()
     } else {
       return;
     }
@@ -372,6 +375,11 @@ export default (props) => {
 
     setState({ currentTime, remainingTime, progress });
   };
+
+  const updateMarker = () => {
+    const markers = core.getMarkers();
+    setMarkers(markers);
+  }
 
   const startBlinking = () => {
     blinkIntervalId = setInterval(() => {

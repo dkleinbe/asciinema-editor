@@ -1,0 +1,12 @@
+@startuml step_sequence
+
+autoactivate on
+participant Player
+participant Core 
+
+Player -> Core : step
+return step
+Player -> Player : updateTime
+Player -> Player : setState(crt, rem, prog)
+
+@enduml

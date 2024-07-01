@@ -302,6 +302,40 @@ function recording(
     return firstMarkerTimeAfter;
   }
 
+  function findMarkerIndexBefore(time) {
+    if (markers.length == 0) return 0;
+
+    let i = 0;
+    let marker = markers[i];
+    let lastMarkerTimeBefore;
+
+    while (marker && marker[0] < time) {
+      lastMarkerTimeBefore = marker[0];
+      marker = markers[++i];
+    }
+
+    return i;
+  }
+
+  function addMarker(time, maker) {
+
+    //const isPlaying = !!eventTimeoutId;
+    pause();
+
+    const currentTime = (pauseElapsedTime ?? 0) / 1000;
+
+    let index = findMarkerIndexBefore(currentTime);
+
+    if (index >= 0) {
+      markers.splice(index >= 0 ? index : 0, 0, [currentTime, 'in']);
+    }
+
+  }
+
+  function getMarkers() {
+    return markers;
+  }
+
   function step() {
     let nextEvent = events[nextEventIndex++];
 
@@ -354,6 +388,8 @@ function recording(
     restart,
     stop: pause,
     getCurrentTime,
+    addMarker,
+    getMarkers
   };
 }
 

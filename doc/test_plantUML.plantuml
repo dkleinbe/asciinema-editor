@@ -1,0 +1,82 @@
+@startuml name
+skinparam groupInheritance 2
+package src {
+    class AsciinemaPlayer {
+        player Player
+        core Core
+        +create(src, element, options) : player
+
+    }
+
+    Interface Player {
+        +play()
+        +pause()
+        +seek(location)
+        +getCurrentTime()
+        +getDuration()
+        +disposse()
+    }
+
+    AsciinemaPlayer o-- Player
+    AsciinemaPlayer o-- Core
+    Player -- Core
+    class Core {
+        driver Driver
+        +play()
+        +pause()
+        +seek(location)
+        +getCurrentTime()
+        +getDuration()
+        +disposse()
+    }
+    Core -- driver.Driver
+
+}
+package src.driver {
+
+    abstract Driver {
+        +play()
+        +pause()
+        +seek(location)
+        +dispose()
+    }
+
+    class recording {
+        events[] Event
+        markers[] marker
+    }
+
+    class Event {
+        time
+        code
+        data
+    }
+
+    class Marker {
+        time
+        text
+    }
+    class websocket
+    class clock
+    class benchmark
+    class random
+
+    Driver <|-- recording
+    Driver <|-- websocket
+    Driver <|-- clock
+    Driver <|-- benchmark
+    Driver <|-- random
+}
+
+package .src.components {
+    
+    class Player
+
+}
+package src.parser {
+
+    class asciinema
+
+    asciinema <-- src.driver.recording
+}
+@enduml
