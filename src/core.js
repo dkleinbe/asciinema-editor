@@ -95,6 +95,7 @@ class Idle extends State {
 
   step() {
     this.driver.step();
+    this.core.dispatchEvent("seeked");
   }
 }
 
@@ -404,6 +405,7 @@ class Core {
   getMarkers() {
     return this.driver.getMarkers();
   }
+
   addMarker(where) {
     return this.driver.addMarker(where);
   }

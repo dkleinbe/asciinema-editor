@@ -9,25 +9,29 @@ package src {
     }
 
     Interface Player {
+        index.js
+        ..
         +play()
         +pause()
         +seek(location)
         +getCurrentTime()
         +getDuration()
-        +disposse()
+        +dispose()
     }
 
     AsciinemaPlayer o-- Player
     AsciinemaPlayer o-- Core
     Player -- Core
     class Core {
-        driver Driver
+        .. IPlayer ..
         +play()
         +pause()
         +seek(location)
         +getCurrentTime()
         +getDuration()
-        +disposse()
+        +dispose()
+        --
+        driver Driver
     }
     Core -- driver.Driver
 

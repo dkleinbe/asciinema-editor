@@ -1,0 +1,18 @@
+@startuml step_sequence
+
+autoactivate on
+participant component.Player as Player
+participant Core
+participant driver.Recording as Recording
+
+User -> Player : key 'i'
+Player -> Core : addMarker('in')
+Core -> Recording : addMarker(where)
+return
+return
+Player -> Player : updateMarkers()
+Player -> Core : getMarkers()
+return
+Player -> Player : setMarkers(markers)
+
+@enduml

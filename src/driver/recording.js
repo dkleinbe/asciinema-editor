@@ -1,3 +1,4 @@
+// import { mark } from "@babel/runtime/helpers/regeneratorRuntime";
 import { unparseAsciicastV2 } from "../parser/asciicast";
 import Stream from "../stream";
 
@@ -116,12 +117,33 @@ function recording(
   function runNextEvent() {
     let event = events[nextEventIndex];
     let elapsedWallTime;
-
+    
     do {
       lastEventTime = event[0];
+      let data = event[2];
       nextEventIndex++;
       const stop = executeEvent(event);
+      // TODO; refactor !!!
+      if (data && data.label === "in") {
+        
+        do {
 
+          executeEvent(event);
+          lastEventTime = event[0];
+          data = event[2];
+
+          nextEventIndex++;
+          event = events[nextEventIndex];
+
+        } while (data.label != "out")
+      
+      
+        const targetTime = lastEventTime;
+        lastEventTime = targetTime;
+        pauseElapsedTime = targetTime * 1000;
+        effectiveStartAt = null;
+        startTime = now() - pauseElapsedTime;
+      }
       if (stop) {
         return;
       }
@@ -223,7 +245,9 @@ function recording(
         where = (parseFloat(where.substring(0, where.length - 1)) / 100) * duration;
       }
     } else if (typeof where === "object") {
-      if (where.marker === "prev") {
+      if (where.marker === "out") {
+        where = findMarkerTimeOut(currentTime) ?? currentTime;
+      } else if (where.marker === "prev") {
         where = findMarkerTimeBefore(currentTime) ?? 0;
 
         if (isPlaying && currentTime - where < 1) {
@@ -302,6 +326,21 @@ function recording(
     return firstMarkerTimeAfter;
   }
 
+  function findMarkerTimeOut(time) {
+    if (markers.length == 0) return;
+
+    let i = 0;
+    let marker = markers[i];
+    let firstMarkerTimeAfter;
+
+    while (marker && ! (marker[0] > time && marker[1] == "out")) {
+      
+      marker = markers[++i];
+    }
+
+    return marker[0];    
+  }
+
   function findMarkerIndexBefore(time) {
     if (markers.length == 0) return 0;
 
@@ -317,18 +356,31 @@ function recording(
     return i;
   }
 
-  function addMarker(time, maker) {
+  function addMarker(marker) {
 
     //const isPlaying = !!eventTimeoutId;
-    pause();
+    //pause();
 
     const currentTime = (pauseElapsedTime ?? 0) / 1000;
 
     let index = findMarkerIndexBefore(currentTime);
 
     if (index >= 0) {
-      markers.splice(index >= 0 ? index : 0, 0, [currentTime, 'in']);
+      markers.splice(index >= 0 ? index : 0, 0, [currentTime, marker]);
     }
+
+    let i = 0;
+    let event = events[i];
+    let insertTime;
+
+    while (event && event[0] < currentTime) {
+      insertTime = event[0];
+      event = events[++i];
+    }
+    events.splice(i, 0, [currentTime, 'm', {index: 666, time : currentTime, label : marker }] ) ;
+
+    nextEventIndex++;
+    //resume();
 
   }
 

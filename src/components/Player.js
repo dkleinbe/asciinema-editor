@@ -306,7 +306,7 @@ export default (props) => {
       core.togglePlay();
     } else if (e.key == ".") {
       core.step();
-      updateTime();
+      //updateTime();
     } else if (e.key == "f") {
       toggleFullscreen();
     } else if (e.key == "[") {
@@ -337,9 +337,12 @@ export default (props) => {
       }
     } else if (e.key == "Escape") {
       setIsHelpVisible(false);
-    } else if (e.key == 'm') {
-      core.addMarker("in")
-      updateMarker()
+    } else if (e.key == 'i') {
+        core.addMarker("in");  
+        updateMarkers();
+    } else if (e.key == 'o') {
+        core.addMarker("out");
+        updateMarkers();
     } else {
       return;
     }
@@ -376,7 +379,7 @@ export default (props) => {
     setState({ currentTime, remainingTime, progress });
   };
 
-  const updateMarker = () => {
+  const updateMarkers = () => {
     const markers = core.getMarkers();
     setMarkers(markers);
   }
